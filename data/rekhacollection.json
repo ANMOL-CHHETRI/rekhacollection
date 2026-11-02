@@ -1,0 +1,110 @@
+{
+  "products": [
+    {
+      "id": "prod-rc-101",
+      "reference": "RC-101",
+      "name": "Imperial Royal Bridal Choker Set",
+      "price": 185000,
+      "images": [
+        "/images/necklace.jpg"
+      ],
+      "category": "Necklaces",
+      "description": "An awe-inspiring masterpiece featuring intricately carved floral lattice, cascading fine lustrous pearls, and regal gemstone accents. Ideal for bridal elegance and grand celebrations.",
+      "availability": "available",
+      "featured": true,
+      "is_demo": true,
+      "created_at": "2026-11-01T11:31:03.277Z",
+      "updated_at": "2026-11-01T11:31:03.277Z"
+    },
+    {
+      "id": "prod-rc-102",
+      "reference": "RC-102",
+      "name": "Mayur Filigree Heritage Jhumkas",
+      "price": 48000,
+      "images": [
+        "/images/jhumkas.jpg"
+      ],
+      "category": "Earrings",
+      "description": "Exquisite artisan-crafted traditional jhumkas with hand-carved peacock (Mayur) motifs, delicate bell drops, and fine pearl cluster hangings.",
+      "availability": "available",
+      "featured": true,
+      "is_demo": true,
+      "created_at": "2026-11-01T11:31:03.277Z",
+      "updated_at": "2026-11-01T11:31:03.277Z"
+    },
+    {
+      "id": "prod-rc-103",
+      "reference": "RC-103",
+      "name": "Devi Antique Floral Kada Bangles",
+      "price": 95000,
+      "images": [
+        "/images/bangles.jpg"
+      ],
+      "category": "Bracelets",
+      "description": "Substantial antique gold finish bridal bangles embossed with heritage floral motifs and ruby & emerald accents. Features a secure traditional hinge clasp.",
+      "availability": "available",
+      "featured": true,
+      "is_demo": true,
+      "created_at": "2026-11-01T11:31:03.277Z",
+      "updated_at": "2026-11-01T11:31:03.277Z"
+    },
+    {
+      "id": "prod-rc-104",
+      "reference": "RC-104",
+      "name": "Crown Solitaire Filigree Ring",
+      "price": 36000,
+      "images": [
+        "/images/ring.jpg"
+      ],
+      "category": "Rings",
+      "description": "Brilliant cut centerpiece held within an elevated crown gallery, adorned with master-level filigree detailing along the textured golden band.",
+      "availability": "available",
+      "featured": true,
+      "is_demo": true,
+      "created_at": "2026-11-01T11:31:03.277Z",
+      "updated_at": "2026-11-01T11:31:03.277Z"
+    },
+    {
+      "id": "prod-rc-105",
+      "reference": "RC-105",
+      "name": "Navratna Emerald Maharani Rani Haar",
+      "price": 165000,
+      "images": [
+        "/images/rani-haar.jpg"
+      ],
+      "category": "Necklaces",
+      "description": "Opulent multi-tiered heritage long necklace with deep green emerald drops and an elaborate handcrafted royal medallion pendant.",
+      "availability": "available",
+      "featured": true,
+      "is_demo": true,
+      "created_at": "2026-11-01T11:31:03.277Z",
+      "updated_at": "2026-11-01T11:31:03.277Z"
+    },
+    {
+      "id": "prod-rc-106",
+      "reference": "RC-106",
+      "name": "Apsara Traditional Filigree Choker",
+      "price": 120000,
+      "images": [
+        "/images/necklace.jpg"
+      ],
+      "category": "Necklaces",
+      "description": "Delicately balanced gold choker accented with natural freshwater pearls and matching filigree earrings. A classic choice for wedding ceremonies.",
+      "availability": "available",
+      "featured": false,
+      "is_demo": false,
+      "created_at": "2026-11-01T11:31:03.277Z",
+      "updated_at": "2026-11-02T13:20:34.950Z"
+    }
+  ],
+  "admins": [
+    {
+      "id": "427eb82d-4d84-4304-b9f8-db29a12cd805",
+      "username": "admin",
+      "password_hash": "401165fd052ff72f1e005be96a96610b1bb40f47cf7040f2910e3f188cc10d49de1da285537ff4be871dc2c17708ce75a81b13cfe4cdd8e6fef464eb61fb34db",
+      "salt": "6b9b257c395d2ab7f14dbec8366894431a81184eb25f4d46808e866c6db396ed",
+      "created_at": "2026-11-02T14:16:55.510Z"
+    }
+  ],
+  "login_attempts": []
+}

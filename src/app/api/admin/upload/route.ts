@@ -38,7 +38,26 @@ export async function POST(req: NextRequest) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Ensure uploads directory exists
+    const isServerless = Boolean(
+      process.env.VERCEL ||
+      process.env.AWS_LAMBDA_FUNCTION_NAME ||
+      process.env.LAMBDA_TASK_ROOT
+    );
+
+    if (isServerless) {
+      // In serverless environments with read-only filesystem, convert to base64 data URL
+      const base64 = buffer.toString("base64");
+      const mime = file.type || "image/jpeg";
+      const dataUrl = `data:${mime};base64,${base64}`;
+
+      return NextResponse.json({
+        success: true,
+        url: dataUrl,
+        fileName: file.name,
+      });
+    }
+
+    // Local environment: save to public/uploads
     const uploadsDir = path.join(process.cwd(), "public", "uploads");
     if (!fs.existsSync(uploadsDir)) {
       fs.mkdirSync(uploadsDir, { recursive: true });

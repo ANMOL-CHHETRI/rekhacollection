@@ -17,61 +17,73 @@ export interface SessionPayload {
 
 // Rate Limiting helper
 export function checkRateLimit(ip: string): { allowed: boolean; waitMinutes?: number } {
-  const db = getDb();
-  const now = Date.now();
-  const record = db.prepare("SELECT * FROM login_attempts WHERE ip = ?").get(ip) as any;
+  try {
+    const db = getDb();
+    const now = Date.now();
+    const record = db.prepare("SELECT * FROM login_attempts WHERE ip = ?").get(ip) as any;
 
-  if (!record) {
+    if (!record) {
+      return { allowed: true };
+    }
+
+    if (record.blocked_until && record.blocked_until > now) {
+      const remainingMinutes = Math.ceil((record.blocked_until - now) / 60000);
+      return { allowed: false, waitMinutes: remainingMinutes };
+    }
+
+    return { allowed: true };
+  } catch {
     return { allowed: true };
   }
-
-  if (record.blocked_until && record.blocked_until > now) {
-    const remainingMinutes = Math.ceil((record.blocked_until - now) / 60000);
-    return { allowed: false, waitMinutes: remainingMinutes };
-  }
-
-  return { allowed: true };
 }
 
 export function recordLoginFailure(ip: string): { blocked: boolean; attemptsRemaining: number } {
-  const db = getDb();
-  const now = Date.now();
-  const record = db.prepare("SELECT * FROM login_attempts WHERE ip = ?").get(ip) as any;
+  try {
+    const db = getDb();
+    const now = Date.now();
+    const record = db.prepare("SELECT * FROM login_attempts WHERE ip = ?").get(ip) as any;
 
-  if (!record) {
-    db.prepare(`
-      INSERT INTO login_attempts (ip, attempts, last_attempt, blocked_until)
-      VALUES (?, 1, ?, 0)
-    `).run(ip, now);
-    return { blocked: false, attemptsRemaining: MAX_ATTEMPTS - 1 };
-  }
+    if (!record) {
+      db.prepare(`
+        INSERT INTO login_attempts (ip, attempts, last_attempt, blocked_until)
+        VALUES (?, 1, ?, 0)
+      `).run(ip, now);
+      return { blocked: false, attemptsRemaining: MAX_ATTEMPTS - 1 };
+    }
 
-  // If previous attempt was over 15 minutes ago and not locked, reset
-  const isExpired = now - record.last_attempt > LOCKOUT_MINUTES * 60 * 1000 && record.blocked_until < now;
-  const newAttempts = isExpired ? 1 : record.attempts + 1;
+    // If previous attempt was over 15 minutes ago and not locked, reset
+    const isExpired = now - record.last_attempt > LOCKOUT_MINUTES * 60 * 1000 && record.blocked_until < now;
+    const newAttempts = isExpired ? 1 : record.attempts + 1;
 
-  if (newAttempts >= MAX_ATTEMPTS) {
-    const blockedUntil = now + LOCKOUT_MINUTES * 60 * 1000;
+    if (newAttempts >= MAX_ATTEMPTS) {
+      const blockedUntil = now + LOCKOUT_MINUTES * 60 * 1000;
+      db.prepare(`
+        UPDATE login_attempts 
+        SET attempts = ?, last_attempt = ?, blocked_until = ?
+        WHERE ip = ?
+      `).run(newAttempts, now, blockedUntil, ip);
+      return { blocked: true, attemptsRemaining: 0 };
+    }
+
     db.prepare(`
       UPDATE login_attempts 
-      SET attempts = ?, last_attempt = ?, blocked_until = ?
+      SET attempts = ?, last_attempt = ?, blocked_until = 0
       WHERE ip = ?
-    `).run(newAttempts, now, blockedUntil, ip);
-    return { blocked: true, attemptsRemaining: 0 };
+    `).run(newAttempts, now, ip);
+
+    return { blocked: false, attemptsRemaining: MAX_ATTEMPTS - newAttempts };
+  } catch {
+    return { blocked: false, attemptsRemaining: 4 };
   }
-
-  db.prepare(`
-    UPDATE login_attempts 
-    SET attempts = ?, last_attempt = ?, blocked_until = 0
-    WHERE ip = ?
-  `).run(newAttempts, now, ip);
-
-  return { blocked: false, attemptsRemaining: MAX_ATTEMPTS - newAttempts };
 }
 
 export function recordLoginSuccess(ip: string) {
-  const db = getDb();
-  db.prepare("DELETE FROM login_attempts WHERE ip = ?").run(ip);
+  try {
+    const db = getDb();
+    db.prepare("DELETE FROM login_attempts WHERE ip = ?").run(ip);
+  } catch {
+    // ignore
+  }
 }
 
 // Verify credentials
