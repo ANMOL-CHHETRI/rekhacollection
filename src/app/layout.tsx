@@ -27,7 +27,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://rekhacollection.com"),
   title: {
-    default: "Rekha Collection | Elegance in Every Sparkle | Jewellery Catalogue Butwal",
+    default: "Rekha Collection | Find Your Sparkle | Jewellery Catalogue Butwal",
     template: "%s | Rekha Collection",
   },
   description:
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_NP",
     url: "https://rekhacollection.com",
-    title: "Rekha Collection | Elegance in Every Sparkle",
+    title: "Rekha Collection | Find Your Sparkle",
     description:
       "Fine jewellery catalogue based in Butwal, Nepal. Cash on delivery all over Nepal. Handcrafted bridal sets, jhumkas, bangles, and rings.",
     siteName: "Rekha Collection",

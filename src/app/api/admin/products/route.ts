@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
       name,
       price: numericPrice,
       images: Array.isArray(images) && images.length > 0 ? images : ["/images/necklace.jpg"],
-      category: category || "Necklaces & Sets",
+      category: category || "Necklaces",
       description: description || "",
       availability: validAvailability,
       featured: Boolean(featured),

@@ -112,7 +112,7 @@ function initSchema(db: DatabaseSync) {
         name: "Imperial Royal Bridal Choker Set",
         price: 185000,
         images: JSON.stringify(["/images/necklace.jpg"]),
-        category: "Necklaces & Sets",
+        category: "Necklaces",
         description: "An awe-inspiring masterpiece featuring intricately carved floral lattice, cascading fine lustrous pearls, and regal gemstone accents. Ideal for bridal elegance and grand celebrations.",
         availability: "available",
         featured: 1,
@@ -126,8 +126,8 @@ function initSchema(db: DatabaseSync) {
         name: "Mayur Filigree Heritage Jhumkas",
         price: 48000,
         images: JSON.stringify(["/images/jhumkas.jpg"]),
-        category: "Earrings & Jhumkas",
-        description: "Exquisite artisan-crafted traditional jhumkas with hand-carved peacock (Mayur) motifs, delicate bell drops, and fine pearl cluster hangings.",
+        category: "Earrings",
+        description: "Exquisite artisan-crafted traditional jhumkas with hand-carved peacock motifs, delicate bell drops, and fine pearl cluster hangings.",
         availability: "available",
         featured: 1,
         is_demo: 1,
@@ -140,7 +140,7 @@ function initSchema(db: DatabaseSync) {
         name: "Devi Antique Floral Kada Bangles",
         price: 95000,
         images: JSON.stringify(["/images/bangles.jpg"]),
-        category: "Bangles & Bracelets",
+        category: "Bracelets",
         description: "Substantial antique gold finish bridal bangles embossed with heritage floral motifs and ruby & emerald accents. Features a secure traditional hinge clasp.",
         availability: "available",
         featured: 1,
@@ -168,7 +168,7 @@ function initSchema(db: DatabaseSync) {
         name: "Navratna Emerald Maharani Rani Haar",
         price: 165000,
         images: JSON.stringify(["/images/rani-haar.jpg"]),
-        category: "Bridal & Heritage",
+        category: "Necklaces",
         description: "Opulent multi-tiered heritage long necklace with deep green emerald drops and an elaborate handcrafted royal medallion pendant.",
         availability: "available",
         featured: 1,
@@ -182,7 +182,7 @@ function initSchema(db: DatabaseSync) {
         name: "Apsara Traditional Filigree Choker",
         price: 120000,
         images: JSON.stringify(["/images/necklace.jpg"]),
-        category: "Necklaces & Sets",
+        category: "Necklaces",
         description: "Delicately balanced gold choker accented with natural freshwater pearls and matching filigree earrings. A classic choice for wedding ceremonies.",
         availability: "sold_out",
         featured: 0,
@@ -231,17 +231,6 @@ export function getAllProducts(includeHidden = false): Product[] {
   return rows.map(formatProductRow);
 }
 
-export function getFeaturedProducts(): Product[] {
-  const db = getDb();
-  const rows = db.prepare(`
-    SELECT * FROM products 
-    WHERE availability != 'hidden' AND featured = 1 
-    ORDER BY created_at DESC 
-    LIMIT 6
-  `).all() as any[];
-  return rows.map(formatProductRow);
-}
-
 export function getProductById(id: string): Product | null {
   const db = getDb();
   const row = db.prepare("SELECT * FROM products WHERE id = ?").get(id) as any;
@@ -254,28 +243,6 @@ export function getProductByReference(reference: string): Product | null {
   const row = db.prepare("SELECT * FROM products WHERE reference = ?").get(reference) as any;
   if (!row) return null;
   return formatProductRow(row);
-}
-
-export function getRelatedProducts(category: string, currentId: string, limit = 4): Product[] {
-  const db = getDb();
-  const rows = db.prepare(`
-    SELECT * FROM products 
-    WHERE availability != 'hidden' AND category = ? AND id != ?
-    ORDER BY created_at DESC 
-    LIMIT ?
-  `).all(category, currentId, limit) as any[];
-
-  if (rows.length < limit) {
-    const extra = db.prepare(`
-      SELECT * FROM products 
-      WHERE availability != 'hidden' AND id != ? AND id NOT IN (${rows.map(() => "?").join(",") || "''"})
-      ORDER BY created_at DESC 
-      LIMIT ?
-    `).all(currentId, ...rows.map((r: any) => r.id), limit - rows.length) as any[];
-    rows.push(...extra);
-  }
-
-  return rows.map(formatProductRow);
 }
 
 export function createProduct(data: {
@@ -352,12 +319,6 @@ export function deleteProduct(id: string): boolean {
   const db = getDb();
   const info = db.prepare("DELETE FROM products WHERE id = ?").run(id);
   return info.changes > 0;
-}
-
-export function clearDemoProducts(): number {
-  const db = getDb();
-  const info = db.prepare("DELETE FROM products WHERE is_demo = 1").run();
-  return Number(info.changes);
 }
 
 export function getProductStats() {
